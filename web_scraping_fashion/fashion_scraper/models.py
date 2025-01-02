@@ -32,7 +32,7 @@ class Vestido(models.Model):
     tallas=models.TextField(verbose_name='Tallas')
     color=models.TextField(verbose_name='Color')
     precio = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Precio')
-    categoria = models.ManyToManyField(Categoria)
+    categoria = models.ManyToManyField(Categoria, related_name="vestidos")
     tienda=models.TextField(verbose_name='Tienda')
     listas_deseos = models.ManyToManyField(Usuario, through='ListaDeseos')
 

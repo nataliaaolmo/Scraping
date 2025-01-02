@@ -8,5 +8,5 @@ urlpatterns = [
     path('index.html/', views.index),
     path('populate/', views.populateDatabase),
     path('loadRS/', views.loadRS),
-    #path('admin/', admin.site.urls),
+    path('listar_vestidos_tkinter/', views.listar_vestidos_tkinter, name='listar_vestidos_tkinter'),
 ]

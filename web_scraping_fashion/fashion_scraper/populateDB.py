@@ -1,12 +1,15 @@
 import csv
 import random
 import re
+from tkinter import messagebox
 from bs4 import BeautifulSoup
 import ssl
 import os
 import urllib.request
 import sys
 import django
+from whoosh.index import create_in
+from whoosh.fields import Schema, TEXT, NUMERIC, KEYWORD
 
 #directorio base del proyecto a sys.path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -30,6 +33,7 @@ def reset_table_sequences():
     from django.db import connection
     with connection.cursor() as cursor:
         cursor.execute("DELETE FROM sqlite_sequence WHERE name='fashion_scraper_vestido';")
+        cursor.execute("DELETE FROM sqlite_sequence WHERE name='fashion_scraper_categoria';")
         cursor.execute("DELETE FROM sqlite_sequence WHERE name='fashion_scraper_lista_deseos';")
 
 def populate():
@@ -44,6 +48,7 @@ def populate():
     dresses = populateDresses(urls)
     generate_new_lista_deseos(users, dresses)
     populateWishList(users, dresses)
+    index_dresses()
 
 # ===================== FUNCIONES AUXILIARES =====================
 
@@ -85,7 +90,8 @@ def populateCategories():
                     for subcategoria in categorias_vestido: 
                         categorias_set.add(subcategoria)
 
-    Categoria.objects.bulk_create([Categoria(nombre=nombre) for nombre in categorias_set])
+    for nombre in categorias_set:
+        Categoria.objects.get_or_create(nombre=nombre)
 
 # ===================== USUARIOS =====================
 def populateUsers():
@@ -130,15 +136,14 @@ def populateDresses(urls):
 
     for vestido in lista_vestidos:
         key = (vestido.nombre, vestido.tienda)
-        if key not in seen_vestidos:
+        if key not in seen_vestidos and not Vestido.objects.filter(nombre=vestido.nombre, tienda=vestido.tienda).exists():
             unique_vestidos.append(vestido)
             seen_vestidos.add(key)
 
-    Vestido.objects.bulk_create(unique_vestidos)
-
     for vestido in unique_vestidos:
-        vestido_db = Vestido.objects.get(nombre=vestido.nombre, tienda=vestido.tienda)
-        vestidos_dict[vestido_db.idVestido] = vestido_db 
+        vestido.idVestido = None
+
+    Vestido.objects.bulk_create(unique_vestidos)
 
     return vestidos_dict
 
@@ -158,27 +163,20 @@ def process_dress(producto, vestidos, vestidos_dict, tienda):
         precio_raw = info.find("p", class_="price").select_one(".woocommerce-Price-amount bdi").get_text(strip=True)
         precio = float(precio_raw.replace('€', '').replace(',', '.'))
 
-        exists = Vestido.objects.filter(nombre=titulo, tienda=tienda).exists()
-        if exists:
+        if Vestido.objects.filter(nombre=titulo, tienda=tienda).exists():
             print(f"Vestido ya existe: {titulo}")
             return
 
-        if tienda == "La Moneria":
-            colores = extract_colors(titulo, soup)
-        elif tienda == "Sachas Closet":
-            colores = titulo.split()[1]
-
+        colores = extract_colors(titulo, soup)
         categorias_vestido = extract_categories(soup)
-        categorias_objs = []
-        for categoria_nombre in categorias_vestido:
-            categoria_obj, _ = Categoria.objects.get_or_create(nombre=categoria_nombre)
-            categorias_objs.append(categoria_obj)
+        categorias_objs = [
+            Categoria.objects.get_or_create(nombre=categoria_nombre)[0]
+            for categoria_nombre in categorias_vestido
+        ]
 
-        if tienda == "La Moneria":
-            tallas = extract_sizes_moneria(soup)
-        elif tienda == "Sachas Closet":
-            tallas = extract_sizes_sachas(soup)
+        tallas = extract_sizes_moneria(soup) if tienda == "La Moneria" else extract_sizes_sachas(soup)
 
+        # Crear objeto vestido
         vestido = Vestido(
             nombre=titulo,
             tallas=tallas,
@@ -186,13 +184,18 @@ def process_dress(producto, vestidos, vestidos_dict, tienda):
             precio=precio,
             tienda=tienda,
         )
-        vestidos.append(vestido)  # No asignamos idVestido manualmente
-        vestidos_dict[vestido.idVestido] = vestido  # Usamos el nombre como clave
+        vestido.save()  # Guardar para obtener un ID válido
+        vestido.categoria.set(categorias_objs)  # Asignar categorías específicas
+        vestido.save()
+
+        vestidos.append(vestido)
+        vestidos_dict[vestido.idVestido] = vestido
 
         print(f"Procesado vestido: {titulo}, Precio: {precio}, Categorías: {categorias_vestido}, Tallas: {tallas}")
 
     except Exception as e:
         print(f"Error procesando vestido: {e}")
+
 
 
 # ===================== EXTRACCIÓN DE DATOS =====================
@@ -207,8 +210,8 @@ def extract_categories(soup):
     categorias = soup.find("span", class_="posted_in")
     if categorias:
         categorias_texto = categorias.find_all("a", rel="tag")
-        return [c.text.strip() for c in categorias_texto]  # Devolver una lista
-    return ["Sin categoría"]
+        return list(set(c.text.strip() for c in categorias_texto))
+    return []
 
 
 def extract_sizes_moneria(soup):
@@ -252,31 +255,35 @@ def extract_sizes_sachas(soup):
     return tallas_unicas
 
 # ===================== INDEXADO CON WHOOSH =====================
-# def index_dresses(lista_vestidos):
-#     schema = Schema(
-#         idVestido=TEXT(stored=True),
-#         nombre=TEXT(stored=True),
-#         categoria=TEXT(stored=True),
-#         color=TEXT(stored=True),
-#         precio=NUMERIC(stored=True)
-#     )
+def index_dresses():
+    schema = Schema(
+        nombre=TEXT(stored=True),
+        tallas=TEXT(stored=True), #alomejot rb hay que poner el commas=True
+        color=KEYWORD(stored=True, commas=True),
+        precio=NUMERIC(stored=True, decimal_places=2),
+        categoria=KEYWORD(stored=True, commas=True),
+        tienda=TEXT(stored=True),
+    )
 
-#     import os
-#     if not os.path.exists("whoosh_index"):
-#         os.mkdir("whoosh_index")
-#     ix = create_in("whoosh_index", schema)
+    import os
+    if not os.path.exists("Index"):
+        os.mkdir("Index")
+    ix = create_in("Index", schema)
 
-#     writer = ix.writer()
-#     for vestido in lista_vestidos:
-#         categorias = ', '.join([cat.nombre for cat in vestido.categoria.all()]) 
-#         writer.add_document(
-#             idVestido=vestido.idVestido,
-#             nombre=vestido.nombre,
-#             categoria=categorias,
-#             color=vestido.color,
-#             precio=float(vestido.precio)
-#         )
-#     writer.commit()
+    writer = ix.writer()
+    for vestido in Vestido.objects.all():
+        categorias = ', '.join([cat.nombre for cat in vestido.categoria.all()]) 
+        writer.add_document(
+            nombre=vestido.nombre,
+            tallas=vestido.tallas,
+            color=vestido.color,
+            precio=float(vestido.precio),
+            categoria=categorias,
+            tienda=vestido.tienda,
+        )
+    writer.commit()
+    messagebox.showinfo("Fin de indexado",
+                        "Se han indexado " + str(len(Vestido.objects.all())) + " juegos")
 
 # ===================== LISTA DE DESEOS =====================
 def generate_new_lista_deseos(users, dresses):
