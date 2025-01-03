@@ -1,0 +1,28 @@
+{% extends 'master.html' %}
+
+{% block titulo %}Buscar por Color y Talla{% endblock %}
+
+{% block contenido %}
+    <h3>Buscar Vestidos por Color y Talla</h3>
+    <form method="POST">
+        {% csrf_token %}
+        {{ formulario.as_p }}
+        <button type="submit">Buscar</button>
+    </form>
+
+    {% if color or talla %}
+        <h4>Resultados para Color "{{ color }}" y Talla "{{ talla }}"</h4>
+    {% endif %}
+
+    {% if vestidos %}
+        <ul>
+            {% for vestido in vestidos %}
+                <li>
+                    <strong>{{ vestido.nombre }}</strong> - Precio: {{ vestido.precio }}€ - Tallas: {{ vestido.tallas }} - Tienda: {{ vestido.tienda }} - Colores: {{ vestido.color }}
+                </li>
+            {% endfor %}
+        </ul>
+    {% elif color or talla %}
+        <p>No se encontraron vestidos con Color "{{ color }}" y Talla "{{ talla }}"</p>
+    {% endif %}
+{% endblock %}

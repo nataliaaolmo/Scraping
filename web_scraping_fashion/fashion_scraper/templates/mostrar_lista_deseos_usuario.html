@@ -1,0 +1,21 @@
+{% extends 'master.html' %}
+
+{% block titulo %}Lista de Deseos del Usuario{% endblock %}
+
+{% block contenido %}
+    <h3>Lista de Deseos del Usuario</h3>
+    <form method="POST">
+        {% csrf_token %}
+        {{ formulario.as_p }}
+        <button type="submit">Buscar</button>
+    </form>
+
+    {% if items %}
+        <h4>Lista de Deseos de {{ usuario }}</h4>
+        <ul>
+            {% for deseo in items %}
+                <li>{{ deseo.idVestido.nombre }} - Precio: {{ deseo.idVestido.precio }}€</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endblock %}

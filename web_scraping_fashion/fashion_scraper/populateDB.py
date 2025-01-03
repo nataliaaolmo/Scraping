@@ -283,7 +283,7 @@ def index_dresses():
         )
     writer.commit()
     messagebox.showinfo("Fin de indexado",
-                        "Se han indexado " + str(len(Vestido.objects.all())) + " juegos")
+                        "Se han indexado " + str(len(Vestido.objects.all())) + " vestidos")
 
 # ===================== LISTA DE DESEOS =====================
 def generate_new_lista_deseos(users, dresses):
