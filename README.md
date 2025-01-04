@@ -12,10 +12,20 @@ To run this project, you will need:
 
 - **Programming Language**: Python 3.8+
 - **Libraries**:
-  - `whoosh`
-  - `beautifulsoup4`
-  - `django`
-
+  - `asgiref==3.8.1`
+  - `beautifulsoup4==4.12.3`
+  - `certifi==2024.12.14`
+  - `charset-normalizer==3.4.1`
+  - `Django==5.1.4`
+  - `django-extensions==3.2.3`
+  - `idna==3.10`
+  - `lxml==5.3.0`
+  - `requests==2.32.3`
+  - `soupsieve==2.6`
+  - `sqlparse==0.5.3`
+  - `tzdata==2024.2`
+  - `urllib3==2.3.0`
+  - `Whoosh==2.7.4`
 
 ## Setup
 1. Clone this repository:
@@ -41,17 +51,38 @@ nombre_del_entorno\Scripts\activate
 python manage.py runserver
 ```
 
-## Usage
-
-
 ## File Structure
 ```
 web-scraping-fashion/
 ├── data/                  # Directory for storing scraped data
-├── scripts/               # Python scripts for scraping
-│   ├── scrape_stradivarius.py
-│   ├── scrape_pullandbear.py
-│   └── scrape_bershka.py
+│   ├── lista_deseos.csv
+│   └── usuarios.csv
+├── fashion_scraper/               # Python scripts for scraping
+│   ├── scripts/
+│   ├── static/
+│   │   └── styles.css
+│   ├── templates/
+│   │   ├── buscar_por_categoria.html
+│   │   ├── buscar_por_color_talla.html
+│   │   ├── buscar_por_precio.html
+│   │   ├── buscar.html
+│   │   ├── index.html
+│   │   ├── master.html
+│   │   ├── modificar_eliminar_color.html
+│   │   ├── mostrar_lista_deseos_usuario.html
+│   │   ├── mostrar_vestidos_similares.html
+│   │   ├── recomendar_vestidos_usuario.html
+│   │   └── recomendar.html
+│   ├── forms.py
+│   ├── models.py
+│   ├── populateDB.py
+│   ├── recommendations.py
+│   ├── urls.py
+│   ├── views.py
+│   └── web_scraping_fashion/
+│   │   └── settings.py
+├── db.sqlite3
+├── manage.py
 ├── requirements.txt       # List of Python dependencies
 ├── README.md              # Project documentation
 └── .env                   # Environment variables (not included in repo)
