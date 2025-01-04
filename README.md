@@ -1,5 +1,5 @@
 # Scraping
-A scraping of some inditex webs such as  **Stradivarius**, **Pull & Bear**, and **Bershka**. The goal is to extract product-related data such as names, prices, categories or sizes.
+A scraping of some web fashion webs. The goal is to extract product-related data such as names, prices, categories or sizes.
 
 ## Objective
 Organize the scraped data into a structured format for further analysis.
