@@ -1,27 +1,31 @@
 {% extends 'master.html' %}
 
-{% block titulo %}Buscar Vestidos por Categoría{% endblock %}
+{% block titulo %} Buscar Vestidos por Categoría {% endblock %}
 
 {% block contenido %}
-    <h3>Buscar Vestidos por Categoría</h3>
-    <form method="POST">
-        {% csrf_token %}
-        {{ formulario.as_p }}
-        <button type="submit">Buscar</button>
-    </form>
+    <div class="card">
+        <h3>Buscar Vestidos por Categoría</h3>
+        <form method="POST">
+            {% csrf_token %}
+            {{ formulario.as_p }}
+            <button type="submit">Buscar</button>
+        </form>
+    </div>
 
     {% if categoria_seleccionada %}
-        <h4>Resultados para Categoría "{{ categoria_seleccionada.nombre }}"</h4>
-        {% if vestidos %}
-            <ul>
-                {% for vestido in vestidos %}
-                    <li>
-                        <strong>{{ vestido.nombre }}</strong> - Precio: {{ vestido.precio }}€ - Tallas: {{ vestido.tallas }}
-                    </li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <p>No se encontraron vestidos en la categoría "{{ categoria_seleccionada.nombre }}"</p>
-        {% endif %}
+        <div class="card">
+            <h4>Resultados para Categoría "{{ categoria_seleccionada.nombre }}"</h4>
+            {% if vestidos %}
+                <ul>
+                    {% for vestido in vestidos %}
+                        <li>
+                            <strong>{{ vestido.nombre }}</strong> - Precio: {{ vestido.precio }}€ - Tallas: {{ vestido.tallas }}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No se encontraron vestidos en la categoría "{{ categoria_seleccionada.nombre }}"</p>
+            {% endif %}
+        </div>
     {% endif %}
 {% endblock %}

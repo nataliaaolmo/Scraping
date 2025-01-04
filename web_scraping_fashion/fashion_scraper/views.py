@@ -288,3 +288,9 @@ def mostrar_lista_deseos_usuario(request):
         "items": items,
         "usuario": usuario,
     })
+
+def buscar(request):
+    return render(request, 'buscar.html')
+
+def recomendar(request):
+    return render(request, 'recomendar.html')

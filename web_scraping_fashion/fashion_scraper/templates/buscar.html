@@ -1,0 +1,15 @@
+{% extends 'master.html' %}
+
+{% block titulo %} Funciones de Búsqueda {% endblock %}
+
+{% block contenido %}
+    <div class="card">
+        <h3>Selecciona una acción relacionada con búsquedas:</h3>
+    </div>
+
+    <div class="action-grid">
+        <button onclick="window.location.href='/buscar/color/'">Buscar por Color y Talla</button>
+        <button onclick="window.location.href='/buscar/precio/'">Buscar por Precio</button>
+        <button onclick="window.location.href='/buscar/categoria/'">Buscar por Categoría</button>
+    </div>
+{% endblock %}

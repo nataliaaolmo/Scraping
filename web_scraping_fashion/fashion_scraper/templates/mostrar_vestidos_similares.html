@@ -1,21 +1,29 @@
 {% extends 'master.html' %}
 
-{% block titulo %}Vestidos Similares{% endblock %}
+{% block titulo %} Vestidos Similares {% endblock %}
 
 {% block contenido %}
-    <h3>Vestidos Similares</h3>
-    <form method="POST">
-        {% csrf_token %}
-        {{ formulario.as_p }}
-        <button type="submit">Buscar</button>
-    </form>
+    <div class="card">
+        <h3>Buscar Vestidos Similares</h3>
+        <form method="POST">
+            {% csrf_token %}
+            {{ formulario.as_p }}
+            <button type="submit">Buscar</button>
+        </form>
+    </div>
 
     {% if items %}
-        <h4>Vestidos similares a {{ vestido.nombre }}</h4>
-        <ul>
-            {% for vestido, similitud in items %}
-                <li>{{ vestido.nombre }} - Similitud: {{ similitud }}</li>
-            {% endfor %}
-        </ul>
+        <div class="card">
+            <h4>Vestidos similares a "{{ vestido.nombre }}"</h4>
+            <ul>
+                {% for vestido, similitud in items %}
+                    <li>{{ vestido.nombre }} - Similitud: {{ similitud }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% else %}
+        <div class="card">
+            <p>No se encontraron vestidos similares.</p>
+        </div>
     {% endif %}
 {% endblock %}

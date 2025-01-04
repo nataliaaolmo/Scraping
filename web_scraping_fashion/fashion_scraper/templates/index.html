@@ -1,23 +1,17 @@
 {% extends 'master.html' %}
 
-{% block titulo %} Autor {% endblock %}
+{% block titulo %}
+    Bienvenido al Sistema de Recomendación
+{% endblock %}
 
-
-
-{% block contenido %} 
-     	<h3>Natalia Olmo</h3>
-
-		<hr>
- 	    <h3>SISTEMAS DE RECOMENDACION COLABORATIVOS PARA TIENDAS DE ROPA </h3>
-		 <p>Seleccione una acción:</p>
-		 <button onclick="window.location.href='/listar_vestidos_tkinter/'">Listar Vestidos (Tkinter)</button>
-		 <button onclick="window.location.href='/buscar/color/'">Buscar Vestidos por Color y Talla</button>
-		 <button onclick="window.location.href='/buscar/precio/'">Buscar Vestidos por Precio</button>
-		 <button onclick="window.location.href='/buscar/categoria/'">Buscar Vestidos por Categoría</button>
-		 <button onclick="window.location.href='/modificar/'">Modificar o Eliminar Color de los Vestidos</button>
-		 <button onclick="window.location.href='recomendar/vestidos_usuario'">Recomendar Vestidos por Usuario</button>
-		 <button onclick="window.location.href='recomendar/vestidos_similares'">Mostrar Vestidos Similares</button>		
-		 <button onclick="window.location.href='recomendar/lista_deseos'">Mostrar Lista Deseos del Usuario</button>		 
-		 <hr>
-
+{% block contenido %}
+    <div class="homepage">
+        <h2>Trabajo realizado por Natalia Olmo</h2>
+        <div class="full-page-grid">
+            <button onclick="window.location.href='/listar_vestidos_tkinter/'" class="big-button">Listar Vestidos</button>
+            <button onclick="window.location.href='/buscar/'" class="big-button">Buscar</button>
+            <button onclick="window.location.href='/recomendar/'" class="big-button">Sistemas de Recomendación</button>
+            <button onclick="window.location.href='/modificar/'" class="big-button">Modificar o Eliminar Colores</button>
+        </div>
+    </div>
 {% endblock %}

@@ -1,21 +1,33 @@
 {% extends 'master.html' %}
 
-{% block titulo %}Recomendar Vestidos{% endblock %}
+{% block titulo %} Recomendaciones de Vestidos {% endblock %}
 
 {% block contenido %}
-    <h3>Recomendar Vestidos</h3>
-    <form method="POST">
-        {% csrf_token %}
-        {{ formulario.as_p }}
-        <button type="submit">Recomendar</button>
-    </form>
+    <div class="card">
+        <h3>Solicitar Recomendaciones de Vestidos</h3>
+        <form method="POST">
+            {% csrf_token %}
+            {{ formulario.as_p }}
+            <button type="submit">Recomendar</button>
+        </form>
+    </div>
 
     {% if items %}
-        <h4>Recomendaciones para {{ usuario }}</h4>
-        <ul>
-            {% for vestido, puntuacion in items %}
-                <li>{{ vestido.nombre }} - Puntuación: {{ puntuacion }}</li>
-            {% endfor %}
-        </ul>
+        <div class="card">
+            <h4>Recomendaciones para {{ usuario }}</h4>
+            <ul>
+                {% for vestido, puntuacion in items %}
+                    <li>
+                        <strong>{{ vestido.nombre }}</strong> - Puntuación: {{ puntuacion }} 
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% else %}
+        {% if usuario %}
+            <div class="card">
+                <p>No se encontraron recomendaciones para el usuario "{{ usuario }}".</p>
+            </div>
+        {% endif %}
     {% endif %}
 {% endblock %}

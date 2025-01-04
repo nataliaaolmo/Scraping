@@ -1,37 +1,22 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="es">
   <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Recomendación</title>
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}?v=2">
   </head>
-
   <body>
     <div class="navbar">
       <a href="/">Inicio</a>
       <a href="/populate">Poblar Base de Datos</a>
       <a href="/loadRS">Cargar Sistema de Recomendación</a>
-  </div>
-  
-
-    <!-- Mensajes flash -->
-    {% if messages %}
-    <div class="alert">
-        {% for message in messages %}
-            <p>{{ message }}</p>
-        {% endfor %}
     </div>
-    {% endif %}
 
     <div class="container">
-        <h1>{% block titulo %} {% endblock %}</h1>
-        {% block contenido %} {% endblock %}
+        <h1>{% block titulo %}{% endblock %}</h1>
+        {% block contenido %}{% endblock %}
     </div>
-
-    <footer>
-        <p>&copy; 2025 Sistema de Recomendación</p>
-    </footer>
   </body>
 </html>

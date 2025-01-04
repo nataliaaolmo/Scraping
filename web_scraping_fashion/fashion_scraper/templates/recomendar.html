@@ -1,0 +1,15 @@
+{% extends 'master.html' %}
+
+{% block titulo %} Sistemas de Recomendación {% endblock %}
+
+{% block contenido %}
+    <div class="card">
+        <h3>Selecciona una acción relacionada con mostrar:</h3>
+    </div>
+
+    <div class="action-grid">
+        <button onclick="window.location.href='/recomendar/vestidos_similares/'">Mostrar Vestidos Similares</button>
+        <button onclick="window.location.href='/recomendar/lista_deseos/'">Mostrar Lista de Deseos</button>
+        <button onclick="window.location.href='/recomendar/vestidos_usuario/'">Recomendar Vestidos por Usuario</button>
+    </div>
+{% endblock %}

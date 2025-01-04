@@ -1,33 +1,36 @@
 {% extends 'master.html' %}
 
-{% block titulo %}Modificar o Eliminar Color{% endblock %}
+{% block titulo %} Modificar o Eliminar Color {% endblock %}
 
 {% block contenido %}
-    <h3>Modificar o Eliminar Colores de un Vestido</h3>
-
-    <form method="POST">
-        {% csrf_token %}
-        {{ buscar_form.as_p }}
-        <button type="submit" name="buscar">Buscar</button>
-    </form>
+    <div class="card">
+        <h3>Modificar o Eliminar Colores de un Vestido</h3>
+        <form method="POST">
+            {% csrf_token %}
+            {{ buscar_form.as_p }}
+            <button type="submit" name="buscar">Buscar</button>
+        </form>
+    </div>
 
     {% if vestido %}
-        <h4>Colores del vestido "{{ vestido.nombre }}"</h4>
-        <ul>
-            {% for color in colores %}
-                <li>
-                    {{ color }}
-                    <form method="POST" style="display: inline;">
-                        {% csrf_token %}
-                        <input type="hidden" name="nombre_vestido" value="{{ vestido.nombre }}">
-                        <input type="hidden" name="color_seleccionado" value="{{ color }}">
-                        {{ modificar_form.nuevo_color }}
-                        <button type="submit" name="modificar">Modificar</button>
-                        <button type="submit" name="eliminar">Eliminar</button>
-                    </form>
-                </li>
-            {% endfor %}
-        </ul>
+        <div class="card">
+            <h4>Colores del vestido "{{ vestido.nombre }}"</h4>
+            <ul>
+                {% for color in colores %}
+                    <li>
+                        {{ color }}
+                        <form method="POST" style="display: inline;">
+                            {% csrf_token %}
+                            <input type="hidden" name="nombre_vestido" value="{{ vestido.nombre }}">
+                            <input type="hidden" name="color_seleccionado" value="{{ color }}">
+                            {{ modificar_form.nuevo_color }}
+                            <button type="submit" name="modificar">Modificar</button>
+                            <button type="submit" name="eliminar">Eliminar</button>
+                        </form>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
     {% elif mensaje %}
         <p>{{ mensaje }}</p>
     {% endif %}
