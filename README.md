@@ -24,13 +24,22 @@ git clone https://github.com/nataliaaolmo/web-scraping-fashion.git
 ```
 2. Navigate to the project directory:
 ```bash
-cd web-scraping-fashion
+cd web_scraping_fashion
 ```
 3. Install dependencies:
 ```bash
 pip install -r requirements.txt
 ```
 4. (Optional) Set up environment variables for API keys or sensitive data in a `.env` file.
+```bash
+python -m venv nombre_del_entorno
+nombre_del_entorno\Scripts\activate
+```
+
+6. Start the applicaction
+```bash
+python manage.py runserver
+```
 
 ## Usage
 
