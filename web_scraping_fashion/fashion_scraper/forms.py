@@ -3,7 +3,6 @@ from django import forms
 
 from fashion_scraper.models import Categoria
 
-
 class UsuarioBusquedaForm(forms.Form):
     idUsuario = forms.IntegerField(
         label="ID del Usuario",

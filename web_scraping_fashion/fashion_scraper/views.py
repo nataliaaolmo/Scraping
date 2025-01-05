@@ -1,8 +1,6 @@
 import os
-import sqlite3
 from tkinter import BOTH, END, LEFT, RIGHT, Y, Listbox, Scrollbar, Tk, Toplevel
 import django
-from django import forms
 from django.contrib import messages
 import shelve
 from django.conf import settings
@@ -55,11 +53,11 @@ def loadRS(request):
 def index(request):
     return render(request, 'index.html', {'STATIC_URL': settings.STATIC_URL})
 
-def listar_vestidos(request):
+def listarVestidos(request):
     vestidos = Vestido.objects.all()
     return render(request, "listar_vestidos.html", {"vestidos": vestidos})
 
-def listar_vestidos_tkinter(request):
+def listarVestidosTkinter(request):
     try:
         def mostrar_vestidos():
             ventana = Toplevel()
@@ -95,7 +93,7 @@ def listar_vestidos_tkinter(request):
         return HttpResponse(f"Error al abrir la ventana de Tkinter: {e}")
     
 # ============================ FUNCIONES DE BÚSQUEDA ============================
-def buscar_por_color_talla(request):
+def buscarPorColorTalla(request):
     formulario= BuscarColorYTallaForm()
     vestidos = None
     color = None
@@ -117,7 +115,7 @@ def buscar_por_color_talla(request):
         "color": color
     })
 
-def buscar_por_precio(request):
+def buscarPorPrecio(request):
     formulario= BuscarPrecioForm()
     vestidos = None
     precio = None
@@ -134,7 +132,7 @@ def buscar_por_precio(request):
         "precio": precio
     })
 
-def buscar_por_categoria(request):
+def buscarPorCategoria(request):
     formulario = BuscarCategoriaForm()
     vestidos = None
     categoria_seleccionada = None
@@ -151,7 +149,7 @@ def buscar_por_categoria(request):
         "categoria_seleccionada": categoria_seleccionada
     })
 
-def modificar_eliminar_color(request):
+def modificarEliminarColor(request):
     buscar_form = BuscarVestidoForm()
     modificar_form = ModificarColorForm()
     colores = []
@@ -218,7 +216,7 @@ def modificar_eliminar_color(request):
         "mensaje": mensaje,
     })
 
-def recomendar_vestidos_usuario(request):
+def recomendarVestidosUsuario(request):
     formulario = UsuarioBusquedaForm()
     items = None
     usuario = None
@@ -244,7 +242,7 @@ def recomendar_vestidos_usuario(request):
     })
 
 
-def mostrar_vestidos_similares(request):
+def mostrarVestidosSimilares(request):
     formulario = VestidoBusquedaForm()
     items = None
     vestido = None
@@ -269,7 +267,7 @@ def mostrar_vestidos_similares(request):
         "vestido": vestido,
     })
 
-def mostrar_lista_deseos_usuario(request):
+def mostrarListaDeseosUsuario(request):
     formulario = UsuarioBusquedaForm()
     items = None
     usuario = None

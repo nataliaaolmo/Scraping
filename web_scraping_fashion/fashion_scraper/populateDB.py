@@ -23,13 +23,12 @@ path = "data"
 urls = [
         "https://www.lamoneria.es/categoria/vestidos/page/",
         "https://www.sachascloset.com/categoria-producto/ropa/vestidos/page/",
-        # "https://rociomoscosio.com/categoria-producto/vestidos/"
     ]
 
 if (not os.environ.get('PYTHONHTTPSVERIFY', '') and getattr(ssl, '_create_unverified_context', None)):
     ssl._create_default_https_context = ssl._create_unverified_context
 
-def reset_table_sequences():
+def resetTableSequences():
     from django.db import connection
     with connection.cursor() as cursor:
         cursor.execute("DELETE FROM sqlite_sequence WHERE name='fashion_scraper_vestido';")
@@ -41,14 +40,14 @@ def populate():
     Vestido.objects.all().delete()
     ListaDeseos.objects.all().delete()
 
-    reset_table_sequences()  
+    resetTableSequences()  
 
     populateCategories()
     users = populateUsers()
     dresses = populateDresses(urls)
-    generate_new_lista_deseos(users, dresses)
+    generateNewListaDeseos(users, dresses)
     populateWishList(users, dresses)
-    index_dresses()
+    indexDresses()
 
 # ===================== FUNCIONES AUXILIARES =====================
 
@@ -86,7 +85,7 @@ def populateCategories():
                 for vestido in vestidos:
                     f = fetch_html(vestido.find("a")["href"])
                     soup = BeautifulSoup(f, "lxml")
-                    categorias_vestido = extract_categories(soup)      
+                    categorias_vestido = extractCategories(soup)      
                     for subcategoria in categorias_vestido: 
                         categorias_set.add(subcategoria)
 
@@ -128,9 +127,8 @@ def populateDresses(urls):
                 vestidos = []
 
             for vestido_html in vestidos:
-                process_dress(vestido_html, lista_vestidos, vestidos_dict, tienda="La Moneria" if "lamoneria" in url else "Sachas Closet")
+                processDress(vestido_html, lista_vestidos, vestidos_dict, tienda="La Moneria" if "lamoneria" in url else "Sachas Closet")
 
-    # Guardar todos los vestidos en la base de datos
     unique_vestidos = []
     seen_vestidos = set()
 
@@ -150,7 +148,7 @@ def populateDresses(urls):
 
 # ===================== PROCESAMIENTO DE UN VESTIDO =====================
 
-def process_dress(producto, vestidos, vestidos_dict, tienda):
+def processDress(producto, vestidos, vestidos_dict, tienda):
     try:
         f = fetch_html(producto.find("a")["href"])
         soup = BeautifulSoup(f, "lxml")
@@ -167,16 +165,15 @@ def process_dress(producto, vestidos, vestidos_dict, tienda):
             print(f"Vestido ya existe: {titulo}")
             return
 
-        colores = extract_colors(titulo, soup)
-        categorias_vestido = extract_categories(soup)
+        colores = extractColors(titulo, soup)
+        categorias_vestido = extractCategories(soup)
         categorias_objs = [
             Categoria.objects.get_or_create(nombre=categoria_nombre)[0]
             for categoria_nombre in categorias_vestido
         ]
 
-        tallas = extract_sizes_moneria(soup) if tienda == "La Moneria" else extract_sizes_sachas(soup)
+        tallas = extractSizesMoneria(soup) if tienda == "La Moneria" else extractSizesSachas(soup)
 
-        # Crear objeto vestido
         vestido = Vestido(
             nombre=titulo,
             tallas=tallas,
@@ -184,8 +181,8 @@ def process_dress(producto, vestidos, vestidos_dict, tienda):
             precio=precio,
             tienda=tienda,
         )
-        vestido.save()  # Guardar para obtener un ID válido
-        vestido.categoria.set(categorias_objs)  # Asignar categorías específicas
+        vestido.save() 
+        vestido.categoria.set(categorias_objs)  
         vestido.save()
 
         vestidos.append(vestido)
@@ -200,13 +197,13 @@ def process_dress(producto, vestidos, vestidos_dict, tienda):
 
 # ===================== EXTRACCIÓN DE DATOS =====================
 
-def extract_colors(titulo, soup):
+def extractColors(titulo, soup):
     colores = soup.find_all("span", class_="wd-swatch-text")
     if colores:
         return ", ".join([color.text.strip() for color in colores])
     return titulo.split()[1] if len(titulo.split()) > 1 else "Color único"
 
-def extract_categories(soup):
+def extractCategories(soup):
     categorias = soup.find("span", class_="posted_in")
     if categorias:
         categorias_texto = categorias.find_all("a", rel="tag")
@@ -214,7 +211,7 @@ def extract_categories(soup):
     return []
 
 
-def extract_sizes_moneria(soup):
+def extractSizesMoneria(soup):
     descripcion = soup.find("div", class_="wc-tab-inner")
     tallas = []
 
@@ -229,7 +226,7 @@ def extract_sizes_moneria(soup):
     tallas_str = ", ".join(tallas)
     return tallas_str
 
-def extract_sizes_sachas(soup):
+def extractSizesSachas(soup):
     mapa_tallas = {
         "S": 34,
         "M": 36,
@@ -255,7 +252,7 @@ def extract_sizes_sachas(soup):
     return tallas_unicas
 
 # ===================== INDEXADO CON WHOOSH =====================
-def index_dresses():
+def indexDresses():
     schema = Schema(
         nombre=TEXT(stored=True),
         tallas=TEXT(stored=True), #alomejot rb hay que poner el commas=True
@@ -286,7 +283,7 @@ def index_dresses():
                         "Se han indexado " + str(len(Vestido.objects.all())) + " vestidos")
 
 # ===================== LISTA DE DESEOS =====================
-def generate_new_lista_deseos(users, dresses):
+def generateNewListaDeseos(users, dresses):
     """
     Genera un archivo lista_deseos.csv basado en los usuarios y vestidos cargados.
     """

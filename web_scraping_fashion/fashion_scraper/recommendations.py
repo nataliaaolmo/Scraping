@@ -100,37 +100,6 @@ def getRecommendations(prefs, person, similarity=sim_pearson):
     return rankings
 
 
-# def getRecommendations2(Prefs, ItemsPrefs, user, similarity=sim_pearson):
-#     totals = {}
-#     simSums = {}
-
-#     for item in ItemsPrefs:
-#         # Si el usuario ya puntuó este ítem, no lo recomendamos
-#         if item in Prefs[user]:
-#             continue  # se vuelve al for
-
-#         # Similaridades entre este ítem y los ítems que el usuario puntuó
-#         for other in Prefs[user]:
-#             sim = similarity(ItemsPrefs, item, other)
-
-#             # Ignorar ítems con similitud <= 0
-#             if sim <= 0:
-#                 continue
-
-#             # Predecir la puntuación del usuario para este ítem
-#             totals.setdefault(item, 0)
-#             totals[item] += Prefs[user][other] * sim
-
-#             # Sumar la similitud
-#             simSums.setdefault(item, 0)
-#             simSums[item] += sim
-
-#     # Normalizar las puntuaciones
-#     rankings = [(total / simSums[item], item) for item, total in totals.items() if simSums[item] != 0]
-#     rankings.sort(reverse=True)  # Ordenar de mayor a menor puntuación predicha
-#     return rankings
-
-
 def transformPrefs(prefs):
     result = {}
     for person in prefs:
